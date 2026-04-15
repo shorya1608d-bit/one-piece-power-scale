@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>One Piece Power Scale | The Ultimate 150 Character Database</title>
+    <meta name="description" content="The most aesthetic One Piece power scaling site with 150+ characters, Haki stats, and Vivre Card accuracy.">
+    <meta name="google-site-verification" content="JvzwdwlqKvnVf-48Kt1rDlLOY6sPoKBUipYeUTOtCT0" />
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --accent: #00e5ff; --gold: #ffd700; --danger: #ff4757; --bg: rgba(15, 20, 25, 0.85); }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        
+        body {
+            /* Highly aesthetic, moody natural background */
+            background: url('https://images.unsplash.com/photo-1542281286-9e0a16bb7366?auto=format&fit=crop&w=1920&q=80') center/cover no-repeat fixed;
+            color: #fff; min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px;
+        }
+
+        .container {
+            width: 100%; max-width: 1100px; background: var(--bg);
+            backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px; padding: 35px; box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+        }
+
+        h1 { font-family: 'Cinzel', serif; color: var(--gold); text-align: center; font-size: 2.5rem; margin-bottom: 30px; letter-spacing: 2px; }
+
+        .duel-hub { display: flex; justify-content: space-between; align-items: center; gap: 20px; margin-bottom: 30px; }
+        
+        select {
+            flex: 1; padding: 16px; background: rgba(0,0,0,0.5); color: #fff;
+            border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; font-size: 1.1rem; outline: none; transition: 0.3s;
+        }
+        select:focus { border-color: var(--accent); box-shadow: 0 0 15px rgba(0, 229, 255, 0.3); }
+
+        .vs-badge {
+            width: 60px; height: 60px; background: transparent; border: 2px solid var(--danger); border-radius: 50%;
+            display: flex; justify-content: center; align-items: center; color: var(--danger);
+            font-family: 'Cinzel', serif; font-size: 1.4rem; font-weight: 800; box-shadow: inset 0 0 10px rgba(255, 71, 87, 0.2);
+        }
+
+        .fight-btn {
+            display: block; width: 300px; margin: 0 auto 30px; padding: 18px;
+            background: transparent; color: var(--gold); border: 2px solid var(--gold); border-radius: 50px;
+            font-weight: 700; font-size: 1.1rem; cursor: pointer; transition: 0.3s; text-transform: uppercase; letter-spacing: 2px;
+        }
+        .fight-btn:hover { background: var(--gold); color: #000; box-shadow: 0 10px 25px rgba(255, 215, 0, 0.3); transform: translateY(-2px); }
+
+        .grid-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
+        
+        .profile { background: rgba(0,0,0,0.4); border-radius: 16px; padding: 25px; border: 1px solid rgba(255,255,255,0.05); }
+        .name-plate { font-family: 'Cinzel', serif; font-size: 1.6rem; color: #fff; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; margin-bottom: 15px; }
+
+        /* Detail Grid for Haki & Fruit */
+        .ability-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        .ability-item { background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; font-size: 0.8rem; text-align: center; border: 1px solid rgba(255,255,255,0.05); }
+        .ability-title { display: block; color: #aaa; margin-bottom: 4px; text-transform: uppercase; font-size: 0.65rem; letter-spacing: 1px; }
+        .ability-val { font-weight: 700; color: var(--accent); }
+        .val-none { color: #555; } .val-norm { color: #fff; } .val-adv { color: var(--gold); text-shadow: 0 0 5px rgba(255,215,0,0.5); }
+
+        .stat-row { margin-bottom: 12px; }
+        .stat-labels { display: flex; justify-content: space-between; font-size: 0.75rem; color: #ccc; margin-bottom: 5px; font-weight: 500; }
+        .bar-bg { background: rgba(255,255,255,0.1); height: 6px; border-radius: 10px; overflow: hidden; }
+        .bar-fill { height: 100%; background: #fff; width: 0%; transition: width 1s cubic-bezier(0.2, 0.8, 0.2, 1); }
+
+        .result-box {
+            margin-top: 30px; padding: 25px; border-radius: 16px; background: rgba(0, 229, 255, 0.05);
+            border: 1px solid var(--accent); display: none; text-align: center;
+        }
+        .win-title { font-family: 'Cinzel', serif; font-size: 2rem; color: var(--accent); margin-bottom: 12px; }
+        .win-text { font-size: 1rem; color: #ddd; line-height: 1.6; max-width: 800px; margin: 0 auto; font-style: italic; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>HAKISCALE DEFINITIVE</h1>
+    
+    <div class="duel-hub">
+        <select id="p1" onchange="render()"></select>
+        <div class="vs-badge">VS</div>
+        <select id="p2" onchange="render()"></select>
+    </div>
+
+    <button class="fight-btn" onclick="calculate()">Commence Battle</button>
+
+    <div class="grid-layout">
+        <div id="c1" class="profile" style="visibility:hidden"></div>
+        <div id="c2" class="profile" style="visibility:hidden"></div>
+    </div>
+
+    <div id="outcome" class="result-box">
+        <div class="win-title" id="outTitle"></div>
+        <div class="win-text" id="outDesc"></div>
+    </div>
+</div>
+
+<script>
+// Data Format: [AP, Speed, Durability, IQ, Obs(0-2), Arm(0-2), Conq(0-2), Fruit(0-2), "30-word description"]
+// 0 = None, 1 = Normal, 2 = Advanced / Awakened
+const db = {
+    // Top Tiers & Yonko
+    "Monkey D. Luffy": [98, 100, 96, 90, 2, 2, 2, 2, "Luffy secures the win using Gear 5's peak freedom, bypassing physical defense with unpredictable rubber environment manipulation and overwhelming his opponent with supreme Advanced Conqueror's Haki."],
+    "Shanks": [98, 98, 92, 98, 2, 2, 2, 0, "Shanks dominates by utilizing Observation Killing to blind his opponent's future sight, following up with a devastating Divine Departure infused with unmatched Advanced Conqueror's Haki."],
+    "Kaido": [98, 92, 100, 88, 2, 2, 2, 1, "Kaido wins through overwhelming physical dominance. His ability to tank the strongest hits while returning massive thunder-bagua strikes eventually breaks his opponent's spirit in pure endurance."],
+    "Whitebeard (Prime)": [100, 90, 100, 96, 2, 2, 2, 1, "Whitebeard shatters the air around his opponent. His combination of island-destroying shockwaves and massive Haki pressure makes defense impossible, crushing his foe under the world's weight."],
+    "Gol D. Roger": [100, 98, 98, 97, 2, 2, 2, 0, "The Pirate King wins by exerting a level of Haki that bends reality. His Divine Departure shatters his opponent's weapon and willpower in one glorious strike."],
+    "Blackbeard": [96, 80, 95, 99, 1, 1, 0, 1, "Blackbeard secures the win through tactical deviousness. By pulling the opponent into his darkness to disable their powers, he follows up with a point-blank tremor punch."],
+    "Big Mom": [95, 84, 100, 82, 1, 2, 2, 1, "Big Mom drains the life-span of her opponent to heal herself, while raining down fire and lightning, making her an unstoppable force of natural destruction."],
+    "Buggy": [40, 60, 80, 99, 0, 0, 0, 1, "Buggy wins through a legendary streak of sheer luck. By accidentally dodging the ultimate move and having his allies strike at the perfect moment, he survives."],
+    
+    // Marines & Admirals
+    "Akainu": [100, 86, 96, 95, 2, 2, 0, 2, "Akainu claims victory by turning the battlefield into a magma hellscape. His absolute offensive power incinerates through any armor with extreme lethality and ruthless aggression."],
+    "Aokiji (Kuzan)": [95, 88, 94, 96, 2, 2, 0, 1, "Kuzan wins by freezing the battlefield to absolute zero. He controls the pace, eventually turning his opponent into a frozen statue with a single touch."],
+    "Kizaru": [94, 100, 90, 92, 2, 2, 0, 1, "Kizaru wins through light-speed acceleration. He moves too fast for the opponent to track, delivering light-speed kicks with incredible mass, ending the fight instantly."],
+    "Fujitora": [95, 85, 94, 96, 2, 2, 0, 1, "Fujitora exerts millions of tons of gravitational pressure. By pinning his enemy to the earth and summoning meteors, he crushes them under overwhelming weight."],
+    "Ryokugyu": [92, 88, 95, 90, 1, 2, 0, 1, "Ryokugyu wins by sapping the nutrients from his opponent using his forest roots. He regenerates continuously, leaving his enemy a withered, energy-less husk."],
+    "Garp (Prime)": [99, 95, 96, 94, 2, 2, 2, 0, "Garp proves raw Haki is superior to Devil Fruits. His Galaxy Impact releases a shockwave of pure willpower that obliterates the target on a molecular level."],
+    "Sengoku (Prime)": [97, 88, 98, 100, 2, 2, 2, 1, "Sengoku releases golden shockwaves that rival tremors. His tactical wisdom allows him to anticipate every move, utilizing his Buddha form with perfect strategic efficiency."],
+    "Smoker": [80, 85, 86, 88, 1, 1, 0, 1, "Smoker traps his opponent in a cage of solid smoke. Using his Seastone Jitte, he nullifies fruit powers and enforces Absolute Justice with relentless pressure."],
+    "Koby": [90, 92, 85, 90, 2, 2, 0, 0, "Koby unleashes a massive Honesty Impact shockwave. Through pure willpower and discipline, he outputs a level of destruction that rivals top-tier pirates, proving his growth."],
+    "Tashigi": [75, 85, 78, 88, 1, 1, 0, 0, "Tashigi wins through disciplined swordsmanship. Her dedication to the blade allows her to parry strong attacks, eventually finding an opening for a swift, decisive strike."],
+    "Helmeppo": [76, 82, 78, 85, 1, 1, 0, 0, "Helmeppo uses agile movements and dual-wielding Kukri blades. His training under Garp allows him to survive chaotic battlefields and strike when the enemy is vulnerable."],
+    "Momonga": [82, 86, 84, 88, 1, 1, 0, 0, "Momonga utilizes Rokushiki techniques and focused swordsmanship. His disciplined Marine training allows him to systematically dismantle his opponent's guard through persistent, high-speed strikes."],
+    "Onigumo": [84, 84, 85, 88, 1, 1, 0, 1, "Onigumo binds his opponent using his spider-like appendages. Wielding multiple swords simultaneously, he overwhelms the enemy with a flurry of coordinated, lethal slashes."],
+
+    // Gorosei & World Government
+    "Imu": [100, 100, 100, 100, 2, 2, 2, 2, "Imu claims a terrifying victory using an unknown ancient power that erases the opponent from history. There is no defense against the shadow of the world's throne."],
+    "St. Saturn": [94, 85, 100, 98, 1, 2, 2, 2, "Saturn outlasts his opponent through demonic regeneration. His telepathic paralysis and explosive ocular attacks allow him to dismantle foes while remaining untouched by physical damage."],
+    "St. Warcury": [96, 85, 100, 96, 1, 2, 2, 2, "Warcury wins because his physical hide is the hardest in existence. His soul-paralyzing roar and indestructible charge crush the opponent into absolute nothingness."],
+    "St. Nusjuro": [97, 100, 92, 97, 2, 2, 2, 2, "Nusjuro wins through light-speed movement and a soul-chilling frost blade that freezes blood on impact. His speed renders even the fastest Future Sight completely useless."],
+    "St. Mars": [96, 98, 95, 96, 1, 2, 2, 2, "Mars dominates the skies, raining down celestial fire and lasers that melt any defense. His sheer size and aerial mobility make him an impossible target."],
+    "St. Ju Peter": [95, 82, 98, 95, 1, 2, 2, 2, "Ju Peter devours the battlefield itself. His massive worm form creates a vacuum that pulls in the opponent, attacking from the blindspot of Observation Haki."],
+    "Garling Figarland": [98, 96, 94, 98, 2, 2, 2, 0, "Garling utilizes the elite combat techniques of the Celestial Dragons. His refined swordsmanship transcends normal combat, ending the duel with a single, noble slash."],
+    "Rob Lucci": [90, 95, 92, 94, 1, 2, 0, 2, "Lucci wins through the ferocity of his awakened Leopard form. His Rokuogan shockwaves penetrate the body, while his mastery of the Six Powers dominates close-quarters."],
+    "Kaku": [86, 92, 88, 90, 1, 2, 0, 2, "Kaku uses his extreme neck-swing momentum to slice through anything. His awakened giraffe form provides a boost in recovery that outlasts his opponent's stamina."],
+    "Stussy": [84, 95, 80, 97, 1, 1, 0, 1, "Stussy utilizes stealth and a paralyzing bite. By putting the opponent to sleep or draining their energy, she ends the battle without needing a high-damage trade."],
+    "Magellan": [94, 80, 90, 92, 0, 1, 0, 1, "Magellan wins by flooding the area with Venom Demon. His highly toxic poison dissolves flesh and stone alike, ensuring his opponent suffocates in agony."],
+
+    // Revolutionaries
+    "Monkey D. Dragon": [98, 98, 96, 100, 2, 2, 2, 1, "Dragon manipulates the weather to strike his opponent with lightning and wind pressure. His strategic mastery ensures he controls nature itself as his ultimate weapon."],
+    "Sabo": [94, 94, 92, 95, 1, 2, 0, 1, "Sabo combines the Flame-Flame fruit with Ryusoken combat. He focuses flames into a single point, creating an internal explosion that shatters the opponent's armor."],
+    "Ivankov": [88, 90, 90, 96, 1, 1, 0, 1, "Ivankov injects a cocktail of hormones. By buffing his own stats and weakening the enemy's body, he secures victory with a massive Death Wink shockwave."],
+    "Bartholomew Kuma": [90, 95, 96, 95, 1, 1, 0, 1, "Kuma repels the air to create atmospheric bombs. He teleports instantly, pushing damage out of his own body, eventually sending his opponent flying miles away."],
+    "Karasu": [88, 94, 86, 92, 1, 1, 0, 1, "Karasu dissolves his body into a murder of soot-crows. Attacking from a thousand angles simultaneously, he shreds his opponent apart before they can land a hit."],
+    "Morley": [85, 75, 94, 88, 1, 1, 0, 1, "Morley pushes the ground itself like clay. By warping the battlefield and attacking from beneath, he traps and crushes his opponent under solid earth."],
+    "Lindbergh": [82, 88, 80, 98, 1, 1, 0, 0, "Lindbergh uses high-tech gadgets and freeze-rays. By adapting his weaponry to the opponent's specific weakness, he secures a technical victory through superior scientific ingenuity."],
+    "Belo Betty": [80, 85, 82, 94, 1, 1, 0, 1, "Belo Betty inspires the battlefield to rise up. Her flag increases the power of everyone around her, eventually overwhelming the enemy through a buffed army."],
+    "Inazuma": [78, 84, 80, 90, 1, 1, 0, 1, "Inazuma turns his hands into giant scissors, cutting through the environment like paper. He reshapes the battlefield to trap his opponent and strike cleanly."],
+    "Koala": [75, 88, 76, 92, 1, 1, 0, 0, "Koala uses refined Fishman Karate to manipulate the water within the opponent's body. Her precise strikes cause internal shockwaves that bypass standard physical durability."],
+
+    // Worst Generation & Warlords
+    "Trafalgar Law": [94, 90, 88, 99, 1, 1, 0, 2, "Law creates an awakened K-Room that ignores physics. He extends his blade through the opponent's body, delivering a shockwave that destroys them from the inside out."],
+    "Eustass Kid": [92, 85, 95, 88, 1, 1, 1, 2, "Kid turns his opponent into a magnet. Pinning them to scrap metal, he delivers a crushing blow with the Damned Punk railgun, flattening any resistance."],
+    "Roronoa Zoro": [96, 92, 95, 90, 1, 2, 2, 0, "Zoro unleashes the King of Hell state. Coating his blades in Advanced Conqueror's Haki, he delivers a decisive, lethal cut that shatters his opponent's guard entirely."],
+    "Killer": [88, 94, 88, 92, 1, 1, 0, 1, "Killer uses his Sonic Scythes to create soundwaves. Vibrating his blades at high frequencies, he cuts through the opponent's internal organs, winning from the inside."],
+    "Jewelry Bonney": [88, 88, 85, 94, 1, 1, 0, 1, "Bonney imagines a Distorted Future where she possesses ultimate power. She transforms her body and alters the enemy's age, rendering them helpless before a crushing blow."],
+    "Capone Bege": [82, 60, 98, 96, 1, 1, 0, 1, "Bege becomes an indestructible Big Father fortress. With an army firing from within his body, he outlasts his opponent through sheer military firepower and defense."],
+    "Basil Hawkins": [84, 75, 94, 96, 1, 1, 0, 1, "Hawkins uses his Strawman to transfer damage to others. By outlasting his opponent through this voodoo method, he eventually lands a lethal curse-based strike."],
+    "Scratchmen Apoo": [82, 82, 80, 88, 1, 1, 0, 1, "Apoo turns sound into a weapon. His music creates explosions and slashes that cannot be blocked if heard, striking his enemy from the air itself."],
+    "X Drake": [86, 84, 92, 92, 1, 1, 0, 1, "Drake relies on the prehistoric ferocity of his Allosaurus form. His massive jaws and thick tail crush the opponent's bones and break their guard in combat."],
+    "Urouge": [88, 75, 96, 85, 1, 1, 0, 1, "Urouge uses the power of Karma. The more damage he takes, the stronger his muscles become, allowing him to strike back with a devastating counter-punch."],
+    "Dracule Mihawk": [98, 96, 94, 98, 2, 2, 1, 0, "Mihawk wins through unmatched sword precision. He identifies the single flaw in his opponent's stance and exploits it with a massive, lethal slash from Yoru."],
+    "Crocodile": [88, 85, 88, 97, 1, 1, 0, 1, "Crocodile drains every drop of moisture from his opponent. Using sandstorms and dehydration techniques, he turns his enemies into withered husks within seconds."],
+    "Donquixote Doflamingo": [90, 92, 88, 98, 1, 1, 1, 2, "Doflamingo manipulates the strings of fate. He turns the battlefield into thread, trapping the opponent in a Birdcage while puppeteering the enemy into their own defeat."],
+    "Boa Hancock": [92, 92, 88, 90, 1, 1, 2, 1, "Hancock weaponizes the opponent's heart. Anyone feeling emotion is turned to stone instantly, while her Haki-enhanced kicks shatter rock and bone alike."],
+    "Edward Weevil": [94, 80, 95, 50, 1, 2, 0, 0, "Weevil unleashes raw, unhinged power reminiscent of a young Whitebeard. He swings his massive bisento with catastrophic force, obliterating his opponent purely through brute strength."],
+    "Gecko Moria": [80, 70, 85, 90, 1, 1, 0, 1, "Moria steals his opponent's shadow, rendering them powerless in the sun. With the power of Shadow's Asgard, he overwhelms his enemies with stolen physical strength."],
+
+    // Straw Hat Crew (Remaining)
+    "Sanji": [92, 99, 95, 95, 2, 1, 0, 0, "Sanji achieves speed invisible to the eye. His blue flames from Ifrit Jambe incinerate internal organs while his genetic exoskeleton tanks every desperate counter-attack."],
+    "Jinbe": [90, 80, 96, 95, 1, 2, 0, 0, "Jinbe utilizes the moisture in the opponent's body. His Vagabond Drill punch provides internal damage that completely ignores traditional physical durability and armor."],
+    "Franky": [86, 75, 96, 94, 0, 0, 0, 0, "Franky fires the Radical Beam, a laser piercing almost any barrier. His General Franky armor provides a level of mechanical tankiness that few can overcome."],
+    "Nico Robin": [84, 80, 85, 99, 0, 1, 0, 1, "Robin sprouts massive limbs with Demonio Fleur. Her tactical genius ensures she catches the enemy in an inescapable submission hold, snapping their spine instantly."],
+    "Brook": [80, 96, 75, 90, 0, 1, 0, 1, "Brook chills the opponent's soul. His slash is so fast the enemy is frozen solid before realizing they've been cut, using the cold of the underworld."],
+    "Tony Tony Chopper": [78, 85, 94, 98, 0, 0, 0, 1, "Chopper overwhelms through Monster Point. Magnifying his physical power, he crushes his opponent underfoot while his medical knowledge allows him to target critical vital points."],
+    "Nami": [82, 75, 60, 98, 0, 0, 0, 0, "Nami utilizes Zeus to deliver a lightning strike bypassing Haki defense. Controlling the climate, she confuses the enemy until the final, lethal bolt strikes."],
+    "Usopp": [75, 75, 85, 98, 1, 0, 0, 0, "Usopp turns the battlefield into a tactical nightmare. From miles away, he uses Pop Greens to trap his opponent, hitting a critical weak point perfectly."],
+
+    // Kaido's Crew (Beast Pirates)
+    "King": [92, 96, 100, 88, 1, 1, 0, 1, "King utilizes Lunarian biology to become indestructible. Switching his flame off for extreme speed, he incinerates his opponents with magma-like, high-pressure fire strikes."],
+    "Queen": [90, 75, 96, 95, 1, 1, 0, 1, "Queen infects his opponent with lethal viruses. While the enemy loses their mind, Queen uses his cyborg enhancements and invisibility to deliver the crushing blow."],
+    "Jack": [86, 65, 98, 80, 1, 1, 0, 1, "Jack wins through sheer attrition. He refuses to stay down, eventually trampling his exhausted opponent under the massive, relentless weight of his Mammoth form."],
+    "Ulti": [84, 88, 92, 85, 1, 1, 0, 1, "Ulti charges with explosive temper and prehistoric power. Her specialized headbutts pack enough Haki and force to crack skulls and shatter the ground beneath her foe."],
+    "Page One": [82, 85, 90, 82, 1, 1, 0, 1, "Page One transforms into a Spinosaurus, dominating close combat. His brutal biting force and thick hide allow him to out-brawl his opponent in a physical slugfest."],
+    "Who's Who": [85, 92, 86, 90, 1, 1, 0, 1, "Who's Who combines Rokushiki with his Sabertooth form. His piercing Fang Pistol attacks and high-speed maneuvers bleed out the opponent in a relentless assault."],
+    "Sasaki": [84, 80, 94, 84, 1, 1, 0, 1, "Sasaki becomes a living, armored drill. Spinning his Triceratops frill at high speeds, he violently rams through his opponent's defenses like an unstoppable battering ram."],
+    "Black Maria": [82, 82, 86, 92, 1, 1, 0, 1, "Black Maria turns the battlefield into a sticky web trap. Immobilizing her opponent, she uses her fiery illusions and poisonous stingers to slowly drain their life."],
+    "Yamato": [94, 94, 96, 90, 1, 2, 2, 1, "Yamato combines Frost-shield with Advanced Conqueror's Haki. Her mythical dog form grants her god-like durability, allowing her to trade blows with the strongest Emperors and win."],
+    "Bao Huang": [40, 70, 50, 85, 1, 0, 0, 1, "Bao Huang acts as the ultimate surveillance system. While useless in direct combat, her ability to track and expose the enemy's location guarantees a tactical advantage."],
+
+    // Big Mom's Crew
+    "Katakuri": [92, 96, 90, 96, 2, 2, 1, 2, "Katakuri is virtually untouchable. His Future Sight reshapes his Mochi body around attacks, while his awakening suffocates the opponent under endless layers of sticky dough."],
+    "Smoothie": [90, 88, 92, 90, 1, 1, 0, 1, "Smoothie wrings the fluids out of her opponent. By dehydrating the enemy to increase her own power, she delivers a massive slash no one can survive."],
+    "Cracker": [88, 85, 96, 92, 1, 2, 0, 1, "Cracker summons an endless army of biscuit soldiers. By hiding his true body, he forces the opponent to fight a thousand warriors, exhausting them completely."],
+    "Perospero": [86, 82, 88, 96, 1, 1, 0, 1, "Perospero traps his opponent in solid candy. Within seconds, the enemy is suffocated and immobilized, allowing him to finish the fight with a lethal candy-arrow."],
+    "Oven": [85, 82, 90, 88, 1, 1, 0, 1, "Oven boils the air around him. Any physical contact results in severe burns, eventually melting his opponent's weapons and spirit in the extreme, radiating heat."],
+    "Daifuku": [85, 84, 88, 88, 1, 1, 0, 1, "Daifuku rubs his belt to summon a massive Genie. With overwhelming reach and power, the Genie crushes the opponent while Daifuku stays at a safe distance."],
+    "Compote": [84, 80, 86, 90, 1, 1, 0, 1, "Compote relies on the raw physical authority of the Charlotte family. Her baseline strength and Haki are enough to dominate lower-tier fighters with minimal effort."],
+    "Snack": [86, 85, 88, 88, 1, 1, 0, 1, "Snack utilizes high-level combat and Armament Haki. As a former Sweet Commander, his heavy blade and relentless pressure eventually shatter the enemy's guarding stance."],
+    "Amande": [82, 88, 80, 92, 1, 1, 0, 0, "Amande delivers the Slowest Slash. By intentionally prolonging the pain of her cut, she breaks her opponent's mental and physical defense through cold, calculated cruelty."],
+    "Mont-d'Or": [80, 80, 82, 96, 1, 1, 0, 1, "Mont-d'Or traps his opponent inside a storybook. Once inside the illusionary world, the enemy is subject to his rules, becoming a permanent addition to his collection."],
+
+    // Blackbeard's Crew
+    "Shiryu": [94, 96, 88, 95, 1, 2, 0, 1, "Shiryu becomes completely invisible. As a cold-blooded assassin, he waits for a single opening to deliver a lethal, unseen slash directly to the opponent's throat."],
+    "Jesus Burgess": [90, 80, 96, 75, 1, 1, 0, 1, "Burgess lifts entire mountains. With his fruit, his physical power is unmatched, crushing his foe under the weight of pure, unadulterated, superhuman muscle."],
+    "Van Augur": [88, 98, 75, 96, 1, 1, 0, 1, "Van Augur teleports instantly between shots. Warping around the battlefield, he ensures his opponent can never close the gap while raining down high-velocity, lethal bullets."],
+    "Avalo Pizarro": [88, 70, 98, 90, 1, 1, 0, 1, "Pizarro merges his consciousness with the island itself. Every rock becomes his limb, crushing the opponent under the weight of the entire landscape he perfectly controls."],
+    "Lafitte": [86, 94, 82, 98, 1, 1, 0, 1, "Lafitte hypnotizes his opponent into compliance. Before the fight truly begins, the enemy is under mental control, allowing him to end the duel swiftly and silently."],
+    "Catarina Devon": [86, 92, 86, 97, 1, 1, 0, 1, "Devon takes the form of the opponent's most trusted ally. Creating a moment of emotional hesitation, she finds the perfect opening to land a ruthless stab."],
+    "San Juan Wolf": [88, 50, 100, 70, 1, 1, 0, 1, "San Juan Wolf stands larger than a mountain. His sheer colossal size makes traditional attacks feel like mosquito bites before he accidentally steps on his opponent."],
+    "Vasco Shot": [84, 80, 88, 85, 1, 1, 0, 1, "Vasco Shot utilizes high-proof alcohol to breathe devastating fire. His unpredictable, drunken brawling style makes him incredibly difficult to read, overwhelming foes with explosive burps."],
+    "Doc Q": [82, 60, 80, 96, 1, 1, 0, 1, "Doc Q infects his opponent with a variety of lethal diseases. As the enemy's body withers and fails, Doc Q delivers the final, merciless blow."],
+    "Stronger": [70, 85, 75, 60, 0, 0, 0, 1, "Stronger transforms into a Pegasus. While incredibly sickly, the aerial advantage allows Doc Q to drop explosive apples and diseases from a perfectly safe distance."],
+
+    // Whitebeard's Crew
+    "Marco": [92, 95, 98, 94, 1, 1, 0, 1, "Marco simply cannot be killed. His blue flames heal any wound instantly, allowing him to trade blows until the opponent is exhausted and drops their defense."],
+    "Jozu": [90, 85, 100, 86, 1, 2, 0, 1, "Jozu becomes the world's hardest substance. Coating his massive frame in Diamond, he becomes an immovable object that tackles the enemy with bone-shattering force."],
+    "Vista": [90, 92, 90, 94, 1, 2, 0, 0, "Vista uses elegant, relentless swordsmanship. His floral strikes create a dance of death that eventually finds a gap in the opponent's defense, proving his mastery."],
+    "Izo": [86, 94, 82, 92, 1, 2, 0, 0, "Izo combines samurai precision with firearms. His Haki-coated bullets find the smallest gaps in the opponent's armor, ending the fight with lethal, focused accuracy."],
+    "Thatch": [85, 88, 84, 90, 1, 1, 0, 0, "Thatch wields dual culinary blades with expert speed. His experience as a Whitebeard commander allows him to deflect attacks and counter with precise, slicing movements."],
+    "Namur": [84, 86, 88, 85, 1, 1, 0, 0, "Namur leverages his Fishman strength and sharp teeth. On land or in water, his martial arts provide a massive physical advantage that crushes human opponents easily."],
+    "Blamenco": [82, 80, 88, 84, 1, 1, 0, 1, "Blamenco pulls a massive mallet from his own chin pockets. He swings the oversized weapon with surprising speed, flattening the enemy under immense blunt force."],
+    "Rakuyo": [84, 85, 84, 86, 1, 1, 0, 0, "Rakuyo fights with a chained morning star that seemingly has a life of its own. He aggressively hounds the opponent, smashing their defenses repeatedly."],
+    "Curiel": [82, 82, 85, 88, 1, 1, 0, 0, "Curiel dual-wields heavy artillery. Laying down a massive field of suppressing fire and explosions, he forces the opponent into a corner before blowing them away."],
+    "Kingdew": [84, 82, 90, 84, 1, 1, 0, 0, "Kingdew fights with massive, iron-plated gauntlets. Relying on raw physical endurance, he blocks incoming strikes and counters with earth-shattering, heavy-weight punches."],
+
+    // Roger's Crew & Wano Samurai
+    "Scopper Gaban": [95, 94, 92, 94, 2, 2, 1, 0, "Scopper Gaban wields dual axes with devastating momentum. As Roger's left hand, his relentless hacking and supreme Haki eventually break down any defensive wall."],
+    "Crocus": [75, 75, 80, 96, 1, 1, 0, 0, "Crocus strikes with seasoned precision. While past his prime, his intimate knowledge of anatomy allows him to hit vital points with his harpoons instantly."],
+    "Kouzuki Oden": [96, 94, 95, 88, 1, 2, 2, 0, "Oden channels the legendary spirit of the samurai. His strike, coated in Advanced Conqueror's, was enough to scar Kaido, proving his offensive power is absolute."],
+    "Kin'emon": [85, 86, 86, 92, 1, 2, 0, 1, "Kin'emon slices through flames and steel. His Fox-Fire Style nullifies fire-based attacks, allowing him to find the gap in defense to deliver a decisive samurai cut."],
+    "Denjiro": [90, 92, 90, 96, 1, 2, 0, 0, "Denjiro uses cold, calculated fury. His precision matches the strongest commanders, eventually landing a lethal blow born from twenty years of hidden, burning anger."],
+    "Ashura Doji": [92, 88, 94, 85, 1, 2, 0, 0, "Ashura Doji harnesses the raw, untamed power of the mountains. He overpowers his foes through sheer physical strength and an unbreakable samurai resolve in combat."],
+    "Nekomamushi": [90, 95, 92, 88, 1, 2, 0, 0, "Nekomamushi transforms into his Sulong form. His speed and electrical claws create a whirlwind of destruction that shreds defenses before the enemy can draw their weapon."],
+    "Inuarashi": [90, 94, 92, 92, 1, 2, 0, 0, "Inuarashi utilizes his Sulong speed and refined swordsmanship. Focusing electricity through his blade, he delivers a paralyzed strike that stops the opponent's heart cold."],
+    "Kawamatsu": [88, 86, 94, 88, 1, 2, 0, 0, "Kawamatsu relies on Kappa-style sumo defense. Deflecting every blow with his physical frame, he crushes the opponent with a single, high-pressure impact strike."],
+    "Kikunojo": [86, 92, 82, 90, 1, 2, 0, 0, "Kiku uses the Lingering Snow style, where cuts leave a soul-chilling sensation. Her blinding speed hides a lethal edge that eventually ends the duel gracefully."],
+    "Raizo": [84, 94, 82, 96, 1, 1, 0, 1, "Raizo reflects his opponent's attack using his scrolls. By capturing their strongest technique and releasing it perfectly, he uses their own power against them."],
+    "Shinobu": [75, 88, 75, 95, 1, 1, 0, 1, "Shinobu rots the ground beneath the opponent. As they fall into a trap, she uses ninja skills to deliver poisoned kunai, winning through clever strategy."],
+
+    // CP9 & Dressrosa/Colosseum
+    "Kaku (CP9)": [84, 90, 85, 88, 1, 1, 0, 1, "Kaku uses extreme acrobatics and his Four-Sword style. Transforming into a Giraffe, his nose-pistol and rankyaku slice through the arena and the opponent effortlessly."],
+    "Jabra": [82, 88, 86, 85, 1, 1, 0, 1, "Jabra uses deception and his awakened Wolf form. By faking a surrender, he lowers the opponent's guard and tears out their throat in an instant."],
+    "Blueno": [78, 84, 88, 85, 1, 1, 0, 1, "Blueno opens an Air Door to vanish. Attacking from a parallel dimension where he cannot be hit, he delivers a devastating, unseen blow to the head."],
+    "Kumadori": [76, 80, 82, 82, 1, 1, 0, 0, "Kumadori manipulates his hair into a thousand prehensile limbs. Binding the enemy securely, his flaming staff strikes the critical blow in traditional kabuki fashion."],
+    "Fukuro": [75, 85, 84, 80, 1, 1, 0, 0, "Fukuro zips around the battlefield using advanced Soru. Waiting for the opponent to tire out, his Jugon punch hits like an iron cannonball."],
+    "Kalifa": [74, 82, 75, 88, 1, 1, 0, 1, "Kalifa scrubs away the opponent's strength using golden soap bubbles. Once they are too slippery to stand or hold a weapon, she strikes them down."],
+    "Spandam": [20, 30, 20, 50, 0, 0, 0, 0, "Spandam cowers behind his explosive elephant-sword, Funkfreed. If the opponent trips or is exhausted, he manages to claim an unearned, cowardly victory."],
+    "Guernica": [88, 92, 88, 94, 1, 1, 0, 0, "Guernica executes the World Government's will perfectly. Using supreme Iron Body and Shigan, he targets the opponent's vitals, securing a clean, professional assassination."],
+    "Cavendish": [88, 98, 86, 90, 1, 1, 0, 0, "Cavendish falls asleep, awakening the alter-ego Hakuba. His speed becomes so extreme he slices through everyone on the battlefield before they can even blink."],
+    "Bartolomeo": [82, 70, 100, 92, 1, 1, 0, 1, "Bartolomeo hides behind indestructible barriers. He simply sits in safety until the opponent is completely exhausted, then delivers a crushing Bari Bari Pistol."],
+    "Don Sai": [88, 86, 90, 92, 1, 2, 0, 0, "Sai focuses Hasshoken vibrations into his heel. He delivers a kick that shatters even a continent-splitting head, winning the duel with an earth-shaking impact."],
+    "Hajrudin": [85, 60, 96, 85, 1, 1, 0, 0, "Hajrudin wins through the absolute brute force of Elbaf. His Gungnir strike sends a ten-thousand-ton opponent flying into the atmosphere, winning through giant pride."],
+    "Ideo": [82, 88, 84, 88, 1, 1, 0, 0, "Ideo delivers punches that trigger internal explosions on impact. His Destruction Cannon clears the battlefield, leaving his opponent a smoldering wreck."],
+    "Leo": [75, 98, 80, 92, 1, 1, 0, 1, "Leo stitches his opponent to the ground before they realize he's there. As a Tontatta, his size and speed make him invisible, immobilizing the enemy entirely."],
+    "Orlumbus": [82, 70, 92, 95, 1, 1, 0, 0, "Orlumbus treats the battlefield like a bowling alley. Throwing the opponent with incredible force, he clears all resistance through superior tactical coordination."],
+    "Kyros": [90, 92, 94, 96, 1, 1, 0, 0, "Kyros uses the legendary swordsmanship of the Colosseum. Even on one leg, his speed and power decapitate top executives in a single, unyielding swing."],
+    "Rebecca": [75, 95, 80, 96, 2, 0, 0, 0, "Rebecca uses a perfect defensive strategy. Her Observation Haki is so refined she parries any attack, using her opponent's momentum to trip them into defeat."],
+    "Bellamy": [80, 94, 86, 82, 1, 1, 0, 1, "Bellamy uses high-velocity kinetic impact. Bouncing off every surface to gain momentum, he hits like a living bullet, eventually breaking through their guard."],
+
+    // Miscellaneous & Classic Villains
+    "Enel": [94, 100, 70, 90, 2, 0, 0, 1, "Enel strikes from the heavens. With the speed of lightning, he rains down 200 million volts, incinerating his opponent before they can even touch him."],
+    "Caesar Clown": [82, 85, 80, 98, 1, 1, 0, 1, "Caesar removes the oxygen from the air. Before the opponent can land a physical hit, they fall unconscious due to suffocation while he watches safely."],
+    "Hody Jones": [80, 85, 88, 70, 0, 0, 0, 0, "Hody overdoses on Energy Steroids. His raw, chemically-enhanced Fishman strength and water bullets overwhelm human defenses in a savage, aquatic-based assault."],
+    "Arlong": [45, 50, 60, 65, 0, 0, 0, 0, "Arlong overwhelms his opponent using sheer Fishman biology. His natural strength and brutal physical assaults crush standard defenses, securing a savage close-quarters victory."],
+    "Hina": [78, 82, 80, 88, 1, 1, 0, 1, "Hina traps her enemy in solid iron bars. By simply passing her arms through their body, she locks them down instantly, securing a clean arrest."],
+    "Doberman": [82, 84, 85, 88, 1, 1, 0, 0, "Doberman relies on battle-hardened Marine instincts. Covered in scars, his relentless swordsmanship and unyielding belief in Absolute Justice allow him to push through pain and win."],
+    "Dalmatian": [82, 86, 82, 85, 1, 1, 0, 1, "Dalmatian transforms into his hybrid dog form. Combining Rokushiki with animalistic speed, he overwhelms his opponent with razor-sharp Shigan strikes to the throat."],
+    "Strawberry": [80, 82, 84, 88, 1, 1, 0, 0, "Strawberry fights with dual blades and a calm, emotionless demeanor. His steady, calculated strikes eventually find the perfect opening to cut the enemy down."],
+    "Kuro": [50, 88, 45, 92, 0, 0, 0, 0, "Kuro enters the Pussyfoot Maneuver. Moving silently and erratically, he slashes everything in the area, eventually slicing his confused opponent's throat in the chaos."],
+    "Don Krieg": [55, 40, 75, 80, 0, 0, 0, 0, "Don Krieg relies entirely on foul play and heavy armor. Firing poison gas and explosive spears, he overwhelms his enemy through sheer, dirty technological firepower."]
+};
+
+const hTxt = ["None", "Normal", "Advanced"];
+const cTxt = ["None", "Normal", "Infusion"];
+const fTxt = ["None", "Normal", "Awakened"];
+const names = Object.keys(db).sort();
+
+const s1 = document.getElementById('p1'), s2 = document.getElementById('p2');
+names.forEach(n => { s1.add(new Option(n, n)); s2.add(new Option(n, n)); });
+
+function render() {
+    document.getElementById('outcome').style.display = 'none';
+    buildCard('c1', s1.value); buildCard('c2', s2.value);
+}
+
+function buildCard(id, char) {
+    const c = db[char], el = document.getElementById(id);
+    el.style.visibility = 'visible';
+    
+    // Haki display classes
+    const oC = c[4]===2?'val-adv':c[4]===1?'val-norm':'val-none';
+    const aC = c[5]===2?'val-adv':c[5]===1?'val-norm':'val-none';
+    const cC = c[6]===2?'val-adv':c[6]===1?'val-norm':'val-none';
+    const fC = c[7]===2?'val-adv':c[7]===1?'val-norm':'val-none';
+
+    el.innerHTML = `
+        <div class="name-plate">${char}</div>
+        <div class="ability-grid">
+            <div class="ability-item"><span class="ability-title">Observation</span><span class="ability-val ${oC}">${hTxt[c[4]]}</span></div>
+            <div class="ability-item"><span class="ability-title">Armament</span><span class="ability-val ${aC}">${hTxt[c[5]]}</span></div>
+            <div class="ability-item"><span class="ability-title">Conqueror's</span><span class="ability-val ${cC}">${cTxt[c[6]]}</span></div>
+            <div class="ability-item"><span class="ability-title">Devil Fruit</span><span class="ability-val ${fC}">${fTxt[c[7]]}</span></div>
+        </div>
+        ${bar("Attack Power", c[0])}
+        ${bar("Speed", c[1])}
+        ${bar("Durability", c[2])}
+        ${bar("Battle IQ", c[3])}
+    `;
+    setTimeout(() => el.querySelectorAll('.bar-fill').forEach(b => b.style.width = b.getAttribute('data-v') + '%'), 50);
+}
+
+function bar(lbl, val) {
+    return `<div class="stat-row"><div class="stat-labels"><span>${lbl}</span><span>${val}%</span></div>
+    <div class="bar-bg"><div class="bar-fill" data-v="${val}"></div></div></div>`;
+}
+
+function calculate() {
+    const p1 = s1.value, p2 = s2.value; if(p1 === p2) return;
+    
+    const score1 = db[p1][0] + db[p1][1] + db[p1][2] + db[p1][3] + (db[p1][4]*10) + (db[p1][5]*15) + (db[p1][6]*20) + (db[p1][7]*10) + Math.random()*15;
+    const score2 = db[p2][0] + db[p2][1] + db[p2][2] + db[p2][3] + (db[p2][4]*10) + (db[p2][5]*15) + (db[p2][6]*20) + (db[p2][7]*10) + Math.random()*15;
+    
+    const win = score1 > score2 ? p1 : p2;
+    document.getElementById('outcome').style.display = 'block';
+    document.getElementById('outTitle').innerText = win.toUpperCase() + " VICTORIOUS";
+    document.getElementById('outDesc').innerText = db[win][8];
+}
+
+// Init
+s2.selectedIndex = 1;
+render();
+</script>
+</body>
+</html>
